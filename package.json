@@ -1,0 +1,28 @@
+{
+  "name": "movieratings",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js",
+    "test": "ava"
+  },
+  "author": "Martin Šatra",
+  "license": "ISC",
+  "dependencies": {
+    "@vscode/sqlite3": "^5.0.8",
+    "chalk": "^5.0.1",
+    "cookie-parser": "^1.4.6",
+    "ejs": "^3.1.7",
+    "express": "^4.18.0",
+    "knex": "^2.0.0",
+    "sqlite3": "^5.0.6"
+  },
+  "devDependencies": {
+    "ava": "^4.2.0",
+    "nodemon": "^2.0.16",
+    "supertest": "^6.2.3"
+  }
+}

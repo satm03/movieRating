@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/movieAddition.css"/>
+    <title>Přidání nového filmu</title>
+</head>
+<body>
+    <h1>Nový film</h1>
+    <a href="/">Zpět na hlavní stránku</a>
+    <div class="<%= movieAlreadyExists ?'visible':'hidden'%>">Nový film nelze založit z důvodů, že film s daným názvem a stejným rokem vydání již existuje.</div>
+    <form action="/add" method="post">
+        <label for="title">Název Filmu: </label>
+        <input type="text" name="title"/><br>
+        <label for="yearOfCreation">Rok: </label>
+        <input type="integer" name="yearOfCreation"/><br>
+        <label for="director">Režie: </label>
+        <input type="text" name="director"/><br>
+        <label for="description">Popis: </label>
+        <input type="text" name="description"/><br>
+        <label for="template">Předloha: </label>
+        <input type="text" name="template"/><br>
+        <label for="music">Hudba: </label>
+        <input type="text" name="music"/><br>
+        <label for="screenplay">Scénář: </label>
+        <input type="text" name="screenplay"/><br>
+        <button type="submit">Přidat film</button>
+        <button type="reset">Resetovat</button>
+    </form>
+</body>
+</html>
