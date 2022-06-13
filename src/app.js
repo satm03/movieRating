@@ -1,92 +1,117 @@
+import express from 'express';
+import crypto from 'crypto';
+import cookieParser from 'cookie-parser';
+import db, {
+  getAllMovies,
+  getMovieById,
+  getMovieByTitle,
+  updateMovieById,
+  getMovieByYearOfCreation,
+  createMovie,
+  deleteMovie,
+  getAllMovieComments,
+  getCommentById,
+} from './db.js';
+import {
+  sendMoviesToAllConnections,
+  sendMovieToAllConnections,
+  sendDeleteMovieToAllConnections,
+  sendMovieCommentsToAllConnections,
+} from './websockets.js';
 
-import express from 'express'
-import knex from 'knex'
-import knexfile from '../knexfile.js'
-import crypto from 'crypto'
-import cookieParser from 'cookie-parser'
+export const app = express();
 
-export const app = express()
-const db = knex(knexfile[process.env.NODE_ENV || 'development'])
+let movieAlreadyExists = false;
 
-let movieAlreadyExists = false
-
-app.use(express.static('public'))
-app.set('view engine', 'ejs')
+app.use(express.static('public'));
+app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser())
+app.use(cookieParser());
 
 app.use(async (req, res, next) => {
-    const token = req.cookies.token
-  
-    if (token) {
-      res.locals.user = await db('user').where({ token }).first()
-    } else {
-      res.locals.user = null
-    }
-  
-    next()
-})
+  const token = req.cookies.token;
 
-app.get('/', async (req, res) =>{
-    const movies = await db('movie').select('*')
-    res.render('index',{
-        title:'MovieM',
-        movies
-    }) 
-})
+  if (token) {
+    res.locals.user = await db('user').where({ token }).first();
+  } else {
+    res.locals.user = null;
+  }
 
-app.get('/movieAddition', (req, res) =>{
-    res.render('movieAddition', {
-        movieAlreadyExists
-    })
-})
+  next();
+});
 
-app.get('/detail/:id', async (req, res, next) =>{
-    const id = Number(req.params.id)
+app.get('/', async (req, res) => {
+  const movies = await getAllMovies();
+  res.render('index', {
+    title: 'MovieM',
+    movies,
+  });
+});
 
-    const movie = await db('movie').select('*').where('id', id).first()
+app.get('/movieAddition', (req, res) => {
+  res.render('movieAddition', {
+    movieAlreadyExists,
+  });
+});
 
-    const comments = await db('comment').select('*').where('movie_id', id)
-    console.log(comments)
+app.get('/detail/:id', async (req, res, next) => {
+  const id = Number(req.params.id);
 
-    if(!movie) return next()
+  const movie = await getMovieById(id);
 
-    res.render('detail', {
-        movie,
-        comments
-    })
-})
+  const comments = await getAllMovieComments(id);
 
-app.post('/edit/:id', async (req, res) =>{
-    const id = Number(req.params.id)
-    const title = String(req.body.title)
-    const yearOfCreation = Number(req.body.yearOfCreation)
-    const director = String(req.body.director)
-    const description = String(req.body.description)
-    const template = String(req.body.template)
-    const music = String(req.body.music)
-    const screenplay = String(req.body.screenplay)
+  if (!movie) return next();
 
-    const movie = await db('movie').select('*').where('id', id).first()
-    
-    if(!movie) return next()
+  res.render('detail', {
+    movie,
+    comments,
+  });
+});
 
-    await db('movie').update({title, yearOfCreation, director, description, template, music, screenplay}).where('id', movie.id)
-    
-    res.redirect('/');
-})
+app.post('/edit/:id', async (req, res) => {
+  const id = Number(req.params.id);
+  const title = String(req.body.title);
+  const yearOfCreation = Number(req.body.yearOfCreation);
+  const director = String(req.body.director);
+  const description = String(req.body.description);
+  const template = String(req.body.template);
+  const music = String(req.body.music);
+  const screenplay = String(req.body.screenplay);
 
-app.get('/delete/:id', async (req, res, next) =>{
-    const id = Number(req.params.id)
+  const movie = await getMovieById(id);
 
-    const movie = await db('movie').select('*').where('id', id).first()
+  if (!movie) return next();
 
-    if(!movie) return next()
+  await db('movie')
+    .update({
+    title,
+    yearOfCreation,
+    director,
+    description,
+    template,
+    music,
+    screenplay,
+  }).where({ id });
 
-    await db('movie').delete().where('id', id);
+  sendMoviesToAllConnections();
+  sendMovieToAllConnections(movie.id);
+  res.redirect('/');
+});
 
-    res.redirect('/');
-})
+app.get('/delete/:id', async (req, res, next) => {
+  const id = Number(req.params.id);
+
+  const movie = await getMovieById(id);
+
+  if (!movie) return next();
+
+  await deleteMovie(movie);
+
+  sendMoviesToAllConnections();
+  sendDeleteMovieToAllConnections(movie.id);
+  res.redirect('/');
+});
 
 app.post('/add', async (req, res) =>{
     const title = String(req.body.title)
@@ -97,10 +122,10 @@ app.post('/add', async (req, res) =>{
     const music = String(req.body.music)
     const screenplay = String(req.body.screenplay)
 
-    const movieTitle = await db('movie').select('*').where('title', title).first()
+    const movieTitle = await getMovieByTitle(title)
 
     if(movieTitle){
-        const movieYear = await db('movie').select('*').where('yearOfCreation', yearOfCreation).first()
+        const movieYear = await updateMovieById(yearOfCreation)
         if(movieYear){
             movieAlreadyExists = true
         }
@@ -110,80 +135,100 @@ app.post('/add', async (req, res) =>{
         if(movieAlreadyExists){
             movieAlreadyExists = false
         }
+        sendMoviesToAllConnections()
         res.redirect('/') 
     }    
 })
 
-app.post('/addComment/:id', async (req, res) =>{
-    const text = String(req.body.newComment)
-    const movie_id = Number(req.params.id)
+app.post('/addComment/:id', async (req, res) => {
+  const text = String(req.body.newComment);
+  const movie_id = Number(req.params.id);
 
-    await db('comment').insert({ movie_id, text })
+  await db('comment').insert({ movie_id, text });
+  sendMovieCommentsToAllConnections(movie_id);
+  res.redirect('back');
+});
 
-    res.redirect('back') 
-})
+app.get('/deleteComment/:comment_id', async (req, res, next) => {
+  const comment_id = Number(req.params.comment_id);
 
-app.get('/login', (req, res) =>{
-    res.render('loginPage')
-})
+  const comment = await getCommentById(comment_id);
+  console.log(comment);
 
-app.get('/registration', (req, res) =>{
-    res.render('registrationPage')
-})
+  if (!comment) return next();
 
-app.post('/register', async (req, res) =>{
-    try{
-        const email = req.body.email
-        const nickname = req.body.nickname
-        const password = req.body.password
+  await db('comment').delete().where('id', comment_id);
 
-        const salt = crypto.randomBytes(16).toString('hex')
-        const hash = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex')
-        const token = crypto.randomBytes(16).toString('hex')
+  sendMovieCommentsToAllConnections(comment.movie_id);
 
-        const ids = await db('user').insert({nickname, email, salt, hash, token})
+  res.redirect('back');
+});
 
-        const user = await db('user').where('id', ids[0]).first()
-    
-        res.cookie('token', user.token)
+app.get('/login', (req, res) => {
+  res.render('loginPage');
+});
 
-        res.redirect('/')
-    } catch (e) {
-        res.render('registrationPage', {
-            error: 'Registrace se nepovedla',
-        })
-    }
-})
+app.get('/registration', (req, res) => {
+  res.render('registrationPage');
+});
+
+app.post('/register', async (req, res) => {
+  try {
+    const email = req.body.email;
+    const nickname = req.body.nickname;
+    const password = req.body.password;
+
+    const salt = crypto.randomBytes(16).toString('hex');
+    const hash = crypto
+      .pbkdf2Sync(password, salt, 100000, 64, 'sha512')
+      .toString('hex');
+    const token = crypto.randomBytes(16).toString('hex');
+
+    const ids = await db('user').insert({ nickname, email, salt, hash, token });
+
+    const user = await db('user').where('id', ids[0]).first();
+
+    res.cookie('token', user.token);
+
+    res.redirect('/');
+  } catch (e) {
+    res.render('registrationPage', {
+      error: 'Registrace se nepovedla',
+    });
+  }
+});
 
 app.post('/signin', async (req, res) => {
-    const email = req.body.email
-    const password = req.body.password
+  const email = req.body.email;
+  const password = req.body.password;
 
-    const user = await db('user').where({ email }).first()
-    if (!user) return null
+  const user = await db('user').where({ email }).first();
+  if (!user) return null;
 
-    const salt = user.salt
-    const hash = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex')
-    if (hash !== user.hash) return null
+  const salt = user.salt;
+  const hash = crypto
+    .pbkdf2Sync(password, salt, 100000, 64, 'sha512')
+    .toString('hex');
+  if (hash !== user.hash) return null;
 
-    if (user) {
-        res.cookie('token', user.token)
+  if (user) {
+    res.cookie('token', user.token);
 
-        res.redirect('/')
-    } else {
-        res.render('login', {
-        error: 'Chybné jméno nebo heslo',
-    })
+    res.redirect('/');
+  } else {
+    res.render('login', {
+      error: 'Chybné jméno nebo heslo',
+    });
   }
-})
+});
 
 app.get('/logout', (req, res) => {
-    res.cookie('token', undefined)
-  
-    res.redirect('back')
-})
+  res.cookie('token', undefined);
+
+  res.redirect('back');
+});
 
 app.use((req, res) => {
-    res.status(404)
-    res.send('404 - Not found')
-})
+  res.status(404);
+  res.send('404 - Not found');
+});

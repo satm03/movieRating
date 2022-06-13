@@ -15,20 +15,23 @@
         <a href="/login">Přihlášení</a>
         <a href="/registration">Registrace</a>
     <% } %>
-    <table>
-        <tr>
-            <th>Film</th>
-            <th>Rok</th>
-        </tr>
-        <% for (const movie of movies) {%>
-            <tr>
-                <td><a href="/detail/<%= movie.id %>"><%= movie.title %></a></td>
-                <td><%= movie.yearOfCreation %></td>
-            </tr>
-        <% } %>
-    </table>
+    
+    <div id="movies">
+	    <%- include('_movies') %>
+    </div>
+    
     <form action="/movieAddition" method="get">
         <button type="submit">Přidat film</button>
     </form>
+    <script>
+        const ws = new WebSocket('ws://localhost:3000')
+
+        ws.addEventListener('message', (message) => {
+            const json = JSON.parse(message.data)
+            if (json.type === 'movies') {
+                document.getElementById('movies').innerHTML = json.html
+            }
+        })
+    </script>
 </body>
 </html>

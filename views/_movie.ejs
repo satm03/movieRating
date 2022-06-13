@@ -1,0 +1,17 @@
+<form action="/edit/<%= movie.id %>" method="post">
+    <label for="title">Název Filmu: </label>
+    <input type="text" name="title" value="<%= movie.title %>"/><br>
+    <label for="yearOfCreation">Rok: </label>
+    <input type="integer" name="yearOfCreation" value="<%= movie.yearOfCreation %>"/><br>
+    <label for="director">Režie: </label>
+    <input type="text" name="director" value="<%= movie.director %>"/><br>
+    <label for="description">Popis: </label>
+    <input type="text" name="description" value="<%= movie.description %>"/><br>
+    <label for="template">Předloha: </label>
+    <input type="text" name="template" value="<%= movie.template %>"/><br>
+    <label for="music">Hudba: </label>
+    <input type="text" name="music" value="<%= movie.music %>"/><br>
+    <label for="screenplay">Scénář: </label>
+    <input type="text" name="screenplay" value="<%= movie.screenplay %>"/><br>
+    <button type="submit">Upravit</button>
+</form>

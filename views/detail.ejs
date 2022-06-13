@@ -9,42 +9,33 @@
 <body>
     <h1><%= movie.title %></h1>
     <a href="/">Zpět na hlavní stránku</a>
-    <form action="/edit/<%= movie.id %>" method="post">
-        <label for="title">Název Filmu: </label>
-        <input type="text" name="title" value="<%= movie.title %>"/><br>
-        <label for="yearOfCreation">Rok: </label>
-        <input type="integer" name="yearOfCreation" value="<%= movie.yearOfCreation %>"/><br>
-        <label for="director">Režie: </label>
-        <input type="text" name="director" value="<%= movie.director %>"/><br>
-        <label for="description">Popis: </label>
-        <input type="text" name="description" value="<%= movie.description %>"/><br>
-        <label for="template">Předloha: </label>
-        <input type="text" name="template" value="<%= movie.template %>"/><br>
-        <label for="music">Hudba: </label>
-        <input type="text" name="music" value="<%= movie.music %>"/><br>
-        <label for="screenplay">Scénář: </label>
-        <input type="text" name="screenplay" value="<%= movie.screenplay %>"/><br>
-        <button type="submit">Upravit</button>
-    </form>
+    <div id="movie">
+	    <%- include('_movie') %>
+    </div>
     <a href="/detail/<%= movie.id %>"><button>Navrátit</button></a><br>
     <a href="/delete/<%= movie.id %>"><button>Smazat film</button></a>
     <h2>Komentáře k filmu</h2>
-    <table>
-        <tr>
-            <th>Komentář</th>
-            <th>Čas</th>
-        </tr>
-        <% for (const comment of comments) {%>
-            <tr>
-                <td><%= comment.text %></td>
-                <td><%= comment.created_at %></td>
-            </tr>
-        <% } %>
-    </table>
+    <div id="comments">
+	    <%- include('_comments') %>
+    </div>
     <form action="/addComment/<%= movie.id %>" method="post">
         <label for="newComment">Komentář: </label>
         <input type="text" name="newComment"/><br>
         <button type="submit">Přidat komentář</button>
     </form>
+    <script>
+        const ws = new WebSocket('ws://localhost:3000')
+
+        ws.addEventListener('message', (message) => {
+            const json = JSON.parse(message.data)
+            if (json.type === 'comments') {
+                document.getElementById('comments').innerHTML = json.html
+            } else if (json.type === 'movie' && json.id === Number('<%= movie.id %>')){
+                document.getElementById('movie').innerHTML = json.html
+            } else if (json.type === 'delete' && json.id === Number('<%= movie.id %>')) {
+                window.location = '/'
+            }
+        })
+    </script>
 </body>
 </html>

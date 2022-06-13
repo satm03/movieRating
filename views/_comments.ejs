@@ -1,0 +1,13 @@
+<table>
+    <tr>
+        <th>Komentář</th>
+        <th>Čas</th>
+    </tr>
+    <% for (const comment of comments) {%>
+        <tr>
+            <td><%= comment.text %></td>
+            <td><%= comment.created_at %></td>
+            <td><a href="/deleteComment/<%= comment.id %>">Smazat</a></td>
+        </tr>
+    <% } %>
+</table>
