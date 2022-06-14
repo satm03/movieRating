@@ -11,6 +11,11 @@ import db, {
   deleteMovie,
   getAllMovieComments,
   getCommentById,
+  createMovieComment,
+  deleteMovieComment,
+  createUser,
+  getUser,
+  getUserByToken
 } from './db.js';
 import {
   sendMoviesToAllConnections,
@@ -32,7 +37,7 @@ app.use(async (req, res, next) => {
   const token = req.cookies.token;
 
   if (token) {
-    res.locals.user = await db('user').where({ token }).first();
+    res.locals.user = await getUserByToken (token);
   } else {
     res.locals.user = null;
   }
@@ -79,12 +84,16 @@ app.post('/edit/:id', async (req, res) => {
   const music = String(req.body.music);
   const screenplay = String(req.body.screenplay);
 
+  console.log(title.length)
+  console.log(yearOfCreation)
+  console.log(director.length)
+  console.log(description.length)
+
   const movie = await getMovieById(id);
 
   if (!movie) return next();
 
-  await db('movie')
-    .update({
+  await updateMovieById({
     title,
     yearOfCreation,
     director,
@@ -92,7 +101,7 @@ app.post('/edit/:id', async (req, res) => {
     template,
     music,
     screenplay,
-  }).where({ id });
+  }, id)
 
   sendMoviesToAllConnections();
   sendMovieToAllConnections(movie.id);
@@ -121,17 +130,18 @@ app.post('/add', async (req, res) =>{
     const template = String(req.body.template)
     const music = String(req.body.music)
     const screenplay = String(req.body.screenplay)
+    console.log(title.length)
+    console.log(yearOfCreation)
+    console.log(screenplay.length)
 
-    const movieTitle = await getMovieByTitle(title)
+    const movieByTitle = await getMovieByTitle(title)
+    const movieByYear = await getMovieByYearOfCreation(yearOfCreation)
 
-    if(movieTitle){
-        const movieYear = await updateMovieById(yearOfCreation)
-        if(movieYear){
-            movieAlreadyExists = true
-        }
+    if(movieByTitle && movieByYear){
+        movieAlreadyExists = true
         res.redirect('/movieAddition') 
     } else {
-        await db('movie').insert({ title, yearOfCreation, director, description, template, music, screenplay })
+        await createMovie({ title, yearOfCreation, director, description, template, music, screenplay })
         if(movieAlreadyExists){
             movieAlreadyExists = false
         }
@@ -143,9 +153,10 @@ app.post('/add', async (req, res) =>{
 app.post('/addComment/:id', async (req, res) => {
   const text = String(req.body.newComment);
   const movie_id = Number(req.params.id);
-
-  await db('comment').insert({ movie_id, text });
-  sendMovieCommentsToAllConnections(movie_id);
+  if(text.length > 0){
+    await createMovieComment({ movie_id, text });
+    sendMovieCommentsToAllConnections(movie_id);
+  }
   res.redirect('back');
 });
 
@@ -157,7 +168,7 @@ app.get('/deleteComment/:comment_id', async (req, res, next) => {
 
   if (!comment) return next();
 
-  await db('comment').delete().where('id', comment_id);
+  await deleteMovieComment(comment);
 
   sendMovieCommentsToAllConnections(comment.movie_id);
 
@@ -174,19 +185,11 @@ app.get('/registration', (req, res) => {
 
 app.post('/register', async (req, res) => {
   try {
-    const email = req.body.email;
     const nickname = req.body.nickname;
+    const email = req.body.email;
     const password = req.body.password;
 
-    const salt = crypto.randomBytes(16).toString('hex');
-    const hash = crypto
-      .pbkdf2Sync(password, salt, 100000, 64, 'sha512')
-      .toString('hex');
-    const token = crypto.randomBytes(16).toString('hex');
-
-    const ids = await db('user').insert({ nickname, email, salt, hash, token });
-
-    const user = await db('user').where('id', ids[0]).first();
+    const user = await createUser(nickname, email, password)
 
     res.cookie('token', user.token);
 
@@ -202,14 +205,7 @@ app.post('/signin', async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
-  const user = await db('user').where({ email }).first();
-  if (!user) return null;
-
-  const salt = user.salt;
-  const hash = crypto
-    .pbkdf2Sync(password, salt, 100000, 64, 'sha512')
-    .toString('hex');
-  if (hash !== user.hash) return null;
+  const user = await getUser(email, password)
 
   if (user) {
     res.cookie('token', user.token);

@@ -5,7 +5,7 @@
 export const up = async function(knex) {
   await knex.schema.createTable('movie', (table) => {
     table.increments('id').primary()
-    table.string('title').unique({indexName:'movie_unqiue_name'}).notNullable
+    table.string('title').notNullable
     table.integer('yearOfCreation').notNullable
     table.string('director').notNullable
     table.string('description').notNullable

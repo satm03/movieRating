@@ -34,7 +34,7 @@ export const updateMovieById = async ({
   template,
   music,
   screenplay,
-}) => {
+}, id) => {
   await db('movie')
     .update({
       title,
@@ -81,3 +81,41 @@ export const getCommentById = async (id) => {
   const comment = await db('comment').select('*').where({ id }).first();
   return comment;
 };
+
+export const createMovieComment = async ({movie_id, text}) => {
+  await db('comment').insert({ movie_id, text });
+};
+
+export const deleteMovieComment = async (comment) => {
+  await db('comment').delete().where('id', comment.id);
+};
+
+export const createUser = async (nickname, email, password) => {
+  const salt = crypto.randomBytes(16).toString('hex');
+  const hash = crypto
+    .pbkdf2Sync(password, salt, 100000, 64, 'sha512')
+    .toString('hex');
+  const token = crypto.randomBytes(16).toString('hex');
+
+  const ids = await db('user').insert({ nickname, email, salt, hash, token });
+
+  const user = await db('user').where('id', ids[0]).first();
+
+  return user
+}
+
+export const getUserByToken = async (token) => {
+  const user = await db('user').where({ token }).first();
+  return user;
+};
+
+export const getUser = async (email, password) => {
+  const user = await db('user').where({ email }).first();
+  if (!user) return null
+
+  const salt = user.salt
+  const hash = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex')
+  if (hash !== user.hash) return null
+
+  return user
+}
