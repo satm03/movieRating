@@ -1,6 +1,7 @@
 import ejs from 'ejs';
 import { WebSocketServer, WebSocket } from 'ws';
-import { getAllMovies, getMovieById, getAllMovieComments } from './db.js'
+import { getAllMovies, getMovieById } from './db/movies.js'
+import { getAllMovieComments } from './db/comments.js'
 
 /** @type {Set<WebSocket>} */
 const connections = new Set();

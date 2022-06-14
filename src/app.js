@@ -1,7 +1,6 @@
 import express from 'express';
-import crypto from 'crypto';
 import cookieParser from 'cookie-parser';
-import db, {
+import {
   getAllMovies,
   getMovieById,
   getMovieByTitle,
@@ -9,14 +8,18 @@ import db, {
   getMovieByYearOfCreation,
   createMovie,
   deleteMovie,
+} from './db/movies.js';
+import {
   getAllMovieComments,
   getCommentById,
   createMovieComment,
   deleteMovieComment,
+} from './db/comments.js';
+import {
   createUser,
   getUser,
   getUserByToken
-} from './db.js';
+} from './db/users.js';
 import {
   sendMoviesToAllConnections,
   sendMovieToAllConnections,
