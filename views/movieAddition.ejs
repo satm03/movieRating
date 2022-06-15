@@ -15,9 +15,6 @@
       <h2>Vytvoření nového filmu</h2>
       <a href="/">Zpět na hlavní stránku</a>
       <div class="content">
-        <div class="<%= movieAlreadyExists ?'visible':'hidden'%>">
-          Nový film již existuje.
-        </div>
         <form action="/add" method="post">
           <div class="rowDiv">
             <label for="title">Název Filmu: </label>
@@ -47,6 +44,9 @@
             <label for="screenplay">Scénář: </label>
             <input type="text" name="screenplay" /><br />
           </div>
+          <% if(typeof error == 'string'){ %>
+            <div class="error"><%= error %></div>
+          <% } %>
           <div class="buttonDiv">
             <button type="submit">Vytvořit</button>
             <button type="reset">Vymazat</button>

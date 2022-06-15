@@ -20,6 +20,17 @@ export const getMovieByYearOfCreation = async (yearOfCreation) => {
   return movie;
 };
 
+export const getMovieByTitleAndYearOfCreation = async (
+  title,
+  yearOfCreation
+) => {
+  const movie = await db('movie')
+    .select('*')
+    .where({ title, yearOfCreation })
+    .first();
+  return movie;
+};
+
 export const updateMovieById = async (
   { title, yearOfCreation, director, description, template, music, screenplay },
   id

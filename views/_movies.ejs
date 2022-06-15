@@ -12,5 +12,8 @@
       <td class="movieYear"><%= movie.yearOfCreation %></td>
     </tr>
     <% } %>
+    <% if(Object.keys(movies).length === 0){ %>
+      <tr><td colspan="2">Prozatím nejsou žádné filmy ke komentování.</td></tr>
+    <% } %>
   </tbody>
 </table>

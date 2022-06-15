@@ -13,9 +13,21 @@ router.get('/registration', (req, res) => {
 
 router.post('/register', async (req, res) => {
   try {
-    const nickname = req.body.nickname;
-    const email = req.body.email;
-    const password = req.body.password;
+    const nickname = String(req.body.nickname).replace(/^\s+(?=\S)|\s+$/gm, '');
+    const email = String(req.body.email).replace(/^\s+(?=\S)|\s+$/gm, '');
+    const password = String(req.body.password).replace(/^\s+(?=\S)|\s+$/gm, '');
+
+    if (
+      nickname.length == 0 ||
+      email == 0 ||
+      password == 0
+    ) {
+      res.render('registrationPage', {
+        error:
+          'Vyplňte prosím validní hodnoty.',
+      });
+      return;
+    }
 
     const user = await createUser(nickname, email, password);
 

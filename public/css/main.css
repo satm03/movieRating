@@ -165,16 +165,6 @@ tbody {
   color: white;
 }
 
-.hidden {
-  display: none;
-}
-
-.visible {
-  display: block;
-  color: red;
-  margin: 10px;
-}
-
 .rowDiv {
   margin-top: 5px;
   display: flex;
@@ -193,4 +183,9 @@ Input {
 
 footer {
   font-size: 10px;
+}
+
+.error{
+  margin-top: 10px;
+  color:red;
 }

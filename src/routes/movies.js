@@ -2,9 +2,8 @@ import express from 'express';
 import auth from '../middlewares/auth.js';
 import {
   getMovieById,
-  getMovieByTitle,
   updateMovieById,
-  getMovieByYearOfCreation,
+  getMovieByTitleAndYearOfCreation,
   createMovie,
   deleteMovie,
 } from '../db/movies.js';
@@ -17,12 +16,8 @@ import {
 
 const router = express.Router();
 
-let movieAlreadyExists = false;
-
 router.get('/movieAddition', auth, (req, res) => {
-  res.render('movieAddition', {
-    movieAlreadyExists,
-  });
+  res.render('movieAddition');
 });
 
 router.get('/detail/:id', async (req, res, next) => {
@@ -42,17 +37,44 @@ router.get('/detail/:id', async (req, res, next) => {
 
 router.post('/edit/:id', auth, async (req, res) => {
   const id = Number(req.params.id);
-  const title = String(req.body.title);
+  const title = String(req.body.title).replace(/^\s+(?=\S)|\s+$/g, '');
   const yearOfCreation = Number(req.body.yearOfCreation);
-  const director = String(req.body.director);
-  const description = String(req.body.description);
-  const template = String(req.body.template);
-  const music = String(req.body.music);
-  const screenplay = String(req.body.screenplay);
+  const director = String(req.body.director).replace(/^\s+(?=\S)|\s+$/g, '');
+  const description = String(req.body.description).replace(
+    /^\s+(?=\S)|\s+$/g,
+    ''
+  );
+  const template = String(req.body.template).replace(/^\s+(?=\S)|\s+$/g, '');
+  const music = String(req.body.music).replace(/^\s+(?=\S)|\s+$/g, '');
+  const screenplay = String(req.body.screenplay).replace(
+    /^\s+(?=\S)|\s+$/g,
+    ''
+  );
 
   const movie = await getMovieById(id);
 
   if (!movie) return next();
+
+  if (
+    title.length == 0 ||
+    yearOfCreation == NaN ||
+    yearOfCreation == 0 ||
+    director.length == 0 ||
+    description.length == 0
+  ) {
+    res.redirect('back');
+    return;
+  }
+
+  const existingMovie = await getMovieByTitleAndYearOfCreation(
+    title,
+    yearOfCreation
+  );
+
+  if (existingMovie) {
+    res.redirect('back');
+    return;
+  }
 
   await updateMovieById(
     {
@@ -87,38 +109,61 @@ router.get('/delete/:id', auth, async (req, res, next) => {
 });
 
 router.post('/add', auth, async (req, res) => {
-  const title = String(req.body.title);
+  const title = String(req.body.title).replace(/^\s+(?=\S)|\s+$/g, '');
   const yearOfCreation = Number(req.body.yearOfCreation);
-  const director = String(req.body.director);
-  const description = String(req.body.description);
-  const template = String(req.body.template);
-  const music = String(req.body.music);
-  const screenplay = String(req.body.screenplay);
-  console.log(title.length);
-  console.log(yearOfCreation);
-  console.log(screenplay.length);
+  const director = String(req.body.director).replace(/^\s+(?=\S)|\s+$/gm, '');
+  const description = String(req.body.description).replace(
+    /^\s+(?=\S)|\s+$/gm,
+    ''
+  );
+  const template = String(req.body.template).replace(/^\s+(?=\S)|\s+$/gm, '');
+  const music = String(req.body.music).replace(/^\s+(?=\S)|\s+$/gm, '');
+  const screenplay = String(req.body.screenplay).replace(
+    /^\s+(?=\S)|\s+$/gm,
+    ''
+  );
 
-  const movieByTitle = await getMovieByTitle(title);
-  const movieByYear = await getMovieByYearOfCreation(yearOfCreation);
-
-  if (movieByTitle && movieByYear) {
-    movieAlreadyExists = true;
-    res.redirect('/movieAddition');
-  } else {
-    await createMovie({
-      title,
-      yearOfCreation,
-      director,
-      description,
-      template,
-      music,
-      screenplay,
+  if (
+    title.length == 0 ||
+    yearOfCreation == NaN ||
+    yearOfCreation == 0 ||
+    director.length == 0 ||
+    description.length == 0
+  ) {
+    res.render('movieAddition', {
+      error:
+        'Prosím vyplňte validní hodnoty pro název filmu, rok natočení, režii a stručný popis.',
     });
-    if (movieAlreadyExists) {
-      movieAlreadyExists = false;
+    return;
+  }
+
+  const existingMovie = await getMovieByTitleAndYearOfCreation(
+    title,
+    yearOfCreation
+  );
+
+  if (existingMovie) {
+    res.render('movieAddition', {
+      error: 'Tento film již v MovieM existuje.',
+    });
+  } else {
+    try {
+      await createMovie({
+        title,
+        yearOfCreation,
+        director,
+        description,
+        template,
+        music,
+        screenplay,
+      });
+      sendMoviesToAllConnections();
+      res.redirect('/');
+    } catch (e) {
+      res.render('movieAddition', {
+        error: 'Neuvedli jste validní hodnoty prosím zkuste znova.',
+      });
     }
-    sendMoviesToAllConnections();
-    res.redirect('/');
   }
 });
 

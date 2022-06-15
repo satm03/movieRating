@@ -23,7 +23,6 @@ router.get('/deleteComment/:comment_id', auth, async (req, res, next) => {
   const comment_id = Number(req.params.comment_id);
 
   const comment = await getCommentById(comment_id);
-  console.log(comment);
 
   if (!comment) return next();
 

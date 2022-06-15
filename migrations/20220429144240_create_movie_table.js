@@ -5,10 +5,10 @@
 export const up = async function(knex) {
   await knex.schema.createTable('movie', (table) => {
     table.increments('id').primary()
-    table.string('title').notNullable
-    table.integer('yearOfCreation').notNullable
-    table.string('director').notNullable
-    table.string('description').notNullable
+    table.string('title').notNullable()
+    table.integer('yearOfCreation').notNullable()
+    table.string('director').notNullable()
+    table.string('description').notNullable()
     table.string('template')
     table.string('music')
     table.string('screenplay')
