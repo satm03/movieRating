@@ -1,13 +1,9 @@
-<table>
-    <tr>
-        <th>Komentář</th>
-        <th>Čas</th>
-    </tr>
-    <% for (const comment of comments) {%>
-        <tr>
-            <td><%= comment.text %></td>
-            <td><%= comment.created_at %></td>
-            <td><a href="/deleteComment/<%= comment.id %>">Smazat</a></td>
-        </tr>
-    <% } %>
-</table>
+<div>
+  <% for (const comment of comments) {%>
+  <div class="comment">
+    <div class="commentText"><%= comment.text %></div>
+    <div class="commentDateTime"><%= comment.created_at %></div>
+    <div class="commentAction"><a href="/deleteComment/<%= comment.id %>"><img src="/images/krizek.png" alt="smazat" width="20px"/></a></div>
+  </div>
+  <% } %>
+</div>

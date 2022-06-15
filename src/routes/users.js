@@ -24,7 +24,7 @@ router.post('/register', async (req, res) => {
     res.redirect('/');
   } catch (e) {
     res.render('registrationPage', {
-      error: 'Registrace se nepovedla',
+      error: 'Uživatel s daným emailem, nebo přezdívkou již existuje.',
     });
   }
 });
@@ -41,7 +41,7 @@ router.post('/signin', async (req, res) => {
     res.redirect('/');
   } else {
     res.render('loginPage', {
-      error: 'Chybné jméno nebo heslo',
+      error: 'Chybné jméno nebo heslo.',
     });
   }
 });

@@ -1,20 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/images/favicon.ico">
+    <link href="/css/loginRegistration.css" rel="stylesheet" type="text/css" />
     <title>MovieM</title>
-</head>
-<body>
-    <h1>Přihlášení</h1>
-    <a href="/">Zpět na hlavní stránku</a>
-    <form action="/signin" method="post">
-        <label for="email">E-mail: </label>
-        <input type="text" name="email"/><br>
-        <label for="password">Heslo: </label>
-        <input type="text" name="password"/><br>
-        <button type="submit">Příhlásit se</button>
-    </form>
-</body>
+  </head>
+  <body>
+    <main>
+      <header>
+        <a href="/"><h1>MovieM</h1></a>
+      </header>
+      <div class="content">
+        <h2>Přihlášení</h2>
+        <a href="/">Zpět na hlavní stránku</a>
+        <form action="/signin" method="post">
+          <div class="rowDiv">
+            <label for="email">Email: </label>
+            <input type="text" name="email" /><br />
+          </div>
+          <div class="rowDiv">
+            <label for="password">Heslo: </label>
+            <input type="password" name="password" /><br />
+          </div>
+          <% if(typeof error == 'string'){ %>
+          <div class="error"><%= error %></div>
+          <% } %>
+          <div class="buttonDiv">
+            <button type="submit">Příhlásit se</button>
+          </div>
+        </form>
+      </div>
+    </main>
+  </body>
 </html>

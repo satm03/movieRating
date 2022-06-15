@@ -1,17 +1,46 @@
 <form action="/edit/<%= movie.id %>" method="post">
+  <div class="rowDiv">
     <label for="title">Název Filmu: </label>
-    <input type="text" name="title" value="<%= movie.title %>"/><br>
+    <input type="text" name="title" value="<%= movie.title %>" /><br />
+  </div>
+  <div class="rowDiv">
     <label for="yearOfCreation">Rok: </label>
-    <input type="integer" name="yearOfCreation" value="<%= movie.yearOfCreation %>"/><br>
+    <input
+      type="integer"
+      name="yearOfCreation"
+      value="<%= movie.yearOfCreation %>"
+    /><br />
+  </div>
+  <div class="rowDiv">
     <label for="director">Režie: </label>
-    <input type="text" name="director" value="<%= movie.director %>"/><br>
+    <input type="text" name="director" value="<%= movie.director %>" /><br />
+  </div>
+  <div class="rowDiv">
     <label for="description">Popis: </label>
-    <input type="text" name="description" value="<%= movie.description %>"/><br>
+    <input
+      type="text"
+      name="description"
+      value="<%= movie.description %>"
+    /><br />
+  </div>
+  <div class="rowDiv">
     <label for="template">Předloha: </label>
-    <input type="text" name="template" value="<%= movie.template %>"/><br>
+    <input type="text" name="template" value="<%= movie.template %>" /><br />
+  </div>
+  <div class="rowDiv">
     <label for="music">Hudba: </label>
-    <input type="text" name="music" value="<%= movie.music %>"/><br>
+    <input type="text" name="music" value="<%= movie.music %>" /><br />
+  </div>
+  <div class="rowDiv">
     <label for="screenplay">Scénář: </label>
-    <input type="text" name="screenplay" value="<%= movie.screenplay %>"/><br>
+    <input
+      type="text"
+      name="screenplay"
+      value="<%= movie.screenplay %>"
+    /><br />
+  </div>
+  <div class="buttonDiv">
     <button type="submit">Upravit</button>
+    <button type="reset">Navrátit</button>
+  </div>
 </form>

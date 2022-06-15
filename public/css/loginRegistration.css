@@ -1,0 +1,74 @@
+body {
+  background-color: #746464;
+  color: #444;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+main {
+  width: 85%;
+  max-width: 750px;
+  min-width: 250px;
+  margin: auto;
+  background: rgba(222, 184, 135, 0.6);
+  border-radius: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.85);
+  text-align: center;
+}
+
+a {
+  text-decoration: none;
+}
+
+header > a {
+  flex: 1;
+}
+
+header > a > h1 {
+  color: orange;
+  text-shadow: 0px 5px 3px #800;
+  font-family: Arial, Times, serif;
+  font-size: 40px;
+  text-align: center;
+}
+
+.rowDiv {
+  margin-top: 5px;
+}
+
+.content {
+  width: 90%;
+  max-width: 700px;
+  min-width: 110px;
+  padding: 10px;
+  border-radius: 12px;
+  border: 2px solid black;
+  background-color: rgb(255, 196, 0);
+  margin: 10px auto;
+}
+
+.buttonDiv {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: bold;
+  color: white;
+}
+
+@media only screen and (max-width: 330px) {
+  .rowDiv {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+@media only screen and (min-width: 330px) {
+  .space {
+    padding-right: 25px;
+  }
+}
+
+.error{
+  margin-top: 10px;
+  color:red;
+}

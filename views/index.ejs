@@ -4,25 +4,29 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/images/favicon.ico">
+    <link href="/css/main.css" rel="stylesheet" type="text/css">
     <title><%= title %></title>
 </head>
 <body>
-    <h1><%= title %></h1>
-    <% if (user) { %>
-        <%= user.name %>
-        <a href="/logout">Odhlásit se</a>
-      <% } else { %>
-        <a href="/login">Přihlášení</a>
-        <a href="/registration">Registrace</a>
-    <% } %>
-    
-    <div id="movies">
-	    <%- include('_movies') %>
-    </div>
-    
-    <form action="/movieAddition" method="get">
-        <button type="submit">Přidat film</button>
-    </form>
+    <main>
+        <%- include('_header') %>
+        <hr>
+        <h2>Seznam filmů</h2>
+        <div class="content"> 
+            <div class="center" id="movies">
+                <%- include('_movies') %>
+            </div>
+        </div>
+        <div class="buttonDiv">
+        <form action="/movieAddition" method="get">
+            <button type="submit">Přidat film</button>
+        </form>
+        </div>
+        <footer>
+            <p>Všechna práva vyhrazena pro studijní účely.</p>
+        </footer>
+    </main>
     <script>
         const ws = new WebSocket('ws://localhost:3000')
 

@@ -1,12 +1,14 @@
 <table>
-    <tr>
-        <th>Film</th>
-        <th>Rok</th>
+    <tbody>
+    <tr class="movie">
+        <th class="movieTitle">Film</th>
+        <th class="movieYear">Rok</th>
     </tr>
     <% for (const movie of movies) {%>
-        <tr>
-            <td><a href="/detail/<%= movie.id %>"><%= movie.title %></a></td>
-            <td><%= movie.yearOfCreation %></td>
+        <tr class="movie">
+            <td class="movieTitle"><a href="/detail/<%= movie.id %>"><%= movie.title %></a></td>
+            <td class="movieYear"><%= movie.yearOfCreation %></td>
         </tr>
     <% } %>
+    </tbody>
 </table>
