@@ -50,11 +50,6 @@ router.post('/edit/:id', auth, async (req, res) => {
   const music = String(req.body.music);
   const screenplay = String(req.body.screenplay);
 
-  console.log(title.length);
-  console.log(yearOfCreation);
-  console.log(director.length);
-  console.log(description.length);
-
   const movie = await getMovieById(id);
 
   if (!movie) return next();

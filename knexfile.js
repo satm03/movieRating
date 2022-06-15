@@ -1,5 +1,5 @@
 export default {
-  development:{
+  development: {
     client: 'sqlite3',
     connection: {
       filename: './mydb.sqlite',
@@ -12,5 +12,5 @@ export default {
       filename: ':memory:',
     },
     useNullAsDefault: false,
-  }
-}
+  },
+};

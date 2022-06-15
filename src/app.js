@@ -8,7 +8,6 @@ import usersRouter from './routes/users.js';
 import loadUser from './middlewares/loadUser.js';
 
 import { getAllMovies } from './db/movies.js';
-import { sendMovieCommentsToAllConnections } from './websockets.js';
 
 export const app = express();
 

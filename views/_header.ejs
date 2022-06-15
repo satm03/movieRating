@@ -1,12 +1,12 @@
 <header>
-    <a href="/"><h1>MovieM</h1></a>
-    <div>
+  <a href="/"><h1>MovieM</h1></a>
+  <div>
     <% if (user) { %>
-        <div>Uživatel: <%= user.nickname %></div>
-        <div><a href="/logout">Odhlásit se</a></div>
+    <div>Uživatel: <%= user.nickname %></div>
+    <div><a href="/logout">Odhlásit se</a></div>
     <% } else { %>
-        <div><a href="/login">Přihlášení</a></div>
-        <div><a href="/registration">Registrace</a></div>
+    <div><a href="/login">Přihlášení</a></div>
+    <div><a href="/registration">Registrace</a></div>
     <% } %>
-    </div>
+  </div>
 </header>

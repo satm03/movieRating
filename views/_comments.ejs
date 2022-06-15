@@ -3,7 +3,11 @@
   <div class="comment">
     <div class="commentText"><%= comment.text %></div>
     <div class="commentDateTime"><%= comment.created_at %></div>
-    <div class="commentAction"><a href="/deleteComment/<%= comment.id %>"><img src="/images/krizek.png" alt="smazat" width="20px"/></a></div>
+    <div class="commentAction">
+      <a href="/deleteComment/<%= comment.id %>"
+        ><img src="/images/krizek.png" alt="smazat" width="20px"
+      /></a>
+    </div>
   </div>
   <% } %>
 </div>

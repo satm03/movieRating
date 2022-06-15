@@ -1,40 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="/images/favicon.ico">
-    <link href="/css/loginRegistration.css" rel="stylesheet" type="text/css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/images/favicon.ico" />
+    <link href="/css/loginRegistration.css" rel="stylesheet" type="text/css" />
     <title>Registrace</title>
-</head>
-<body>
+  </head>
+  <body>
     <main>
-        <header><a href="/"><h1>MovieM</h1></a></header>
-        <div class="content">
-            <h1>Registrace</h1>
-            <a href="/">Zpět na hlavní stránku</a>
-            <form action="/register" method="post">
-                <div class="rowDiv">
-                    <label for="nickname">Přezdívka: </label>
-                    <input type="text" name="nickname"/><br>
-                </div>
-                <div class="rowDiv">
-                    <label class="space" for="email">Email: </label>
-                    <input type="text" name="email"/><br>
-                </div>
-                <div class="rowDiv">
-                    <label class="space" for="password">Heslo: </label>
-                    <input type="password" name="password"/><br>
-                </div>
-                <% if(typeof error == 'string'){ %>
-                    <div class="error"><%= error %></div>
-                <% } %>
-                <div class="buttonDiv">
-                    <button type="submit">Zaregistrovat se</button>
-                </div>
-            </form>
-        </div>
+      <header>
+        <a href="/"><h1>MovieM</h1></a>
+      </header>
+      <div class="content">
+        <h1>Registrace</h1>
+        <a href="/">Zpět na hlavní stránku</a>
+        <form action="/register" method="post">
+          <div class="rowDiv">
+            <label for="nickname">Přezdívka: </label>
+            <input type="text" name="nickname" /><br />
+          </div>
+          <div class="rowDiv">
+            <label class="space" for="email">Email: </label>
+            <input type="text" name="email" /><br />
+          </div>
+          <div class="rowDiv">
+            <label class="space" for="password">Heslo: </label>
+            <input type="password" name="password" /><br />
+          </div>
+          <% if(typeof error == 'string'){ %>
+          <div class="error"><%= error %></div>
+          <% } %>
+          <div class="buttonDiv">
+            <button type="submit">Zaregistrovat se</button>
+          </div>
+        </form>
+      </div>
     </main>
-</body>
+  </body>
 </html>
